@@ -32,6 +32,9 @@ public interface TaskDao {
     @Delete
     void delete(Task task);
 
+    @Query("DELETE FROM tasks WHERE id = (:id)")
+    void deleteById(int id);
+
     @Query("DELETE from tasks")
     void deleteAll();
 

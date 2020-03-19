@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -27,12 +28,14 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.MyView
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         public TextView name, description, status;
+        public ImageView statusImage;
 
         public MyViewHolder(View view) {
             super(view);
             name = (TextView) view.findViewById(R.id.name);
             description = (TextView) view.findViewById(R.id.description);
             status = (TextView) view.findViewById(R.id.status);
+            statusImage = (ImageView) view.findViewById(R.id.imageStatus);
         }
     }
 
@@ -50,6 +53,13 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.MyView
             myViewHolder.name.setText(task.getName());
             myViewHolder.description.setText(task.getDescription());
             myViewHolder.status.setText(task.getStatus());
+            if(task.getStatus().equalsIgnoreCase("done")) {
+                myViewHolder.statusImage.setImageResource(R.drawable.ic_lens_green_24dp);
+            } else if (task.getStatus().equalsIgnoreCase("doing")){
+                myViewHolder.statusImage.setImageResource(R.drawable.ic_lens_orange_24dp);
+            } else if (task.getStatus().equalsIgnoreCase("new")) {
+                myViewHolder.statusImage.setImageResource(R.drawable.ic_lens_blue_24dp);
+            }
         } else {
             // Covers the case of data not being ready yet.
             myViewHolder.name.setText("My task");
@@ -74,6 +84,11 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.MyView
     }
 
     public Task getTaskAt(int position) {
-        return tasks.get(position);
+        Log.i(ADAPTER, "Requested task at position " + position);
+        if(position >= 0) {
+            return tasks.get(position);
+        } else {
+            return null;
+        }
     }
 }
