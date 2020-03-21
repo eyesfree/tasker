@@ -8,6 +8,6 @@ import retrofit2.Call;
 import retrofit2.http.GET;
 
 public interface TaskServiceApi {
-    @GET("tasks")
+    @GET("tasks/v2")
     Call<List<Task>> getTasks();
 }

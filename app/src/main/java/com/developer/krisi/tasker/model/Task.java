@@ -9,8 +9,10 @@ import androidx.room.PrimaryKey;
 @Entity(tableName = "tasks")
 public class Task {
 
-    @PrimaryKey(autoGenerate = true)
-    public int id;
+    @PrimaryKey
+    @ColumnInfo(name="id")
+    @NonNull
+    public String id;
 
     @ColumnInfo(name="name")
     @NonNull
@@ -32,10 +34,6 @@ public class Task {
         this.name = name;
         this.description = description;
         this.status = status;
-    }
-
-    public int getId() {
-        return id;
     }
 
     public String getName() {
@@ -62,4 +60,14 @@ public class Task {
         this.status = status;
     }
 
+    @NonNull
+    @Override
+    public String toString() {
+        StringBuilder fullTaskBuilder = new StringBuilder();
+        fullTaskBuilder
+                .append("Name: ").append(name)
+                .append(", Description: ").append(description)
+                .append(" Status: ").append(status);
+        return fullTaskBuilder.toString();
+    }
 }

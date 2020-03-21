@@ -103,6 +103,7 @@ public class PlaceholderFragment extends Fragment {
                     StringBuilder tasksListAsString = new StringBuilder();
                     for(Task task : tasks) {
                         tasksListAsString.append(task);
+                        tasksListAsString.append("\n");
                     }
                     restResult.setText(tasksListAsString);
                 } else {
