@@ -3,6 +3,7 @@ package com.developer.krisi.tasker.effects;
 import android.graphics.Canvas;
 import android.util.Log;
 
+import com.developer.krisi.tasker.model.Status;
 import com.developer.krisi.tasker.model.Task;
 import com.developer.krisi.tasker.model.TaskListAdapter;
 import com.developer.krisi.tasker.model.TaskViewModel;
@@ -39,7 +40,7 @@ public class CustomTouchCallback extends ItemTouchHelper.SimpleCallback {
             Log.i("TouchHelper", "Swiped left, setting to done");
             Task currentTask = adapter.getTaskAt(viewHolder.getAdapterPosition());
             if (currentTask != null) {
-                currentTask.setStatus("DONE");
+                currentTask.setStatus(Status.DONE);
                 viewModel.update(currentTask);
             }
         } else {

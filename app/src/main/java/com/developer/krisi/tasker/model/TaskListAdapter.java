@@ -52,12 +52,12 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.MyView
             Task task = tasks.get(position);
             myViewHolder.name.setText(task.getName());
             myViewHolder.description.setText(task.getDescription());
-            myViewHolder.status.setText(task.getStatus());
-            if(task.getStatus().equalsIgnoreCase("done")) {
+            myViewHolder.status.setText(task.getStatus().getStatusName());
+            if(task.getStatus().equals(Status.DONE)) {
                 myViewHolder.statusImage.setImageResource(R.drawable.ic_lens_green_24dp);
-            } else if (task.getStatus().equalsIgnoreCase("doing")){
+            } else if (task.getStatus().equals(Status.IN_PROGRESS)){
                 myViewHolder.statusImage.setImageResource(R.drawable.ic_lens_orange_24dp);
-            } else if (task.getStatus().equalsIgnoreCase("new")) {
+            } else if (task.getStatus().equals(Status.NEW)) {
                 myViewHolder.statusImage.setImageResource(R.drawable.ic_lens_blue_24dp);
             }
         } else {

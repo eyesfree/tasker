@@ -45,8 +45,6 @@ public class PlaceholderFragment extends Fragment {
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
 
-    private TextView restResult;
-
     public static PlaceholderFragment newInstance(int index) {
         PlaceholderFragment fragment = new PlaceholderFragment();
         Bundle bundle = new Bundle();
@@ -85,38 +83,6 @@ public class PlaceholderFragment extends Fragment {
         ItemTouchHelper.SimpleCallback callback = new CustomTouchCallback(taskViewModel, taskListAdapter);
         ItemTouchHelper helper = new ItemTouchHelper(callback);
         helper.attachToRecyclerView(recyclerView);
-
-
-        restResult = root.findViewById(R.id.restResult);
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://172.17.151.241:8080")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-        TaskServiceApi taskServiceApi = retrofit.create(TaskServiceApi.class);
-
-        Call<List<Task>> call = taskServiceApi.getTasks();
-        call.enqueue(new Callback<List<Task>>() {
-            @Override
-            public void onResponse(Call<List<Task>> call, Response<List<Task>> response) {
-                if(response.isSuccessful()) {
-                    List<Task> tasks = response.body();
-                    StringBuilder tasksListAsString = new StringBuilder();
-                    for(Task task : tasks) {
-                        tasksListAsString.append(task);
-                        tasksListAsString.append("\n");
-                    }
-                    restResult.setText(tasksListAsString);
-                } else {
-                    restResult.setText(response.code());
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<Task>> call, Throwable t) {
-                restResult.setText(t.getMessage());
-            }
-        });
-
         return root;
     }
 }

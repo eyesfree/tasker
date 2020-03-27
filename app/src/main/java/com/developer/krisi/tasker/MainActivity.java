@@ -2,32 +2,20 @@ package com.developer.krisi.tasker;
 
 import android.content.Intent;
 import android.os.Bundle;
-
-import com.developer.krisi.tasker.model.Task;
-import com.developer.krisi.tasker.model.TaskListAdapter;
-import com.developer.krisi.tasker.model.TaskViewModel;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
-import com.google.android.material.tabs.TabLayout;
-
-import androidx.annotation.Nullable;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
-import androidx.recyclerview.widget.DefaultItemAnimator;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.viewpager.widget.ViewPager;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.developer.krisi.tasker.model.Status;
+import com.developer.krisi.tasker.model.Task;
+import com.developer.krisi.tasker.model.TaskViewModel;
 import com.developer.krisi.tasker.ui.main.SectionsPagerAdapter;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.tabs.TabLayout;
 
-import java.util.List;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.viewpager.widget.ViewPager;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -62,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == NEW_TASK_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK) {
-            Task task = new Task(data.getStringExtra(AddTaskActivity.NAME), data.getStringExtra(AddTaskActivity.DESCRIPTION), "NEW");
+            Task task = new Task(data.getStringExtra(AddTaskActivity.NAME), data.getStringExtra(AddTaskActivity.DESCRIPTION), Status.NEW);
             taskViewModel.insert(task);
         } else {
             Toast.makeText(
