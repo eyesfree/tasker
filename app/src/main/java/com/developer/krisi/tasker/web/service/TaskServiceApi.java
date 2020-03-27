@@ -1,11 +1,13 @@
-package com.developer.krisi.tasker.ui.main;
+package com.developer.krisi.tasker.web.service;
 
 import com.developer.krisi.tasker.model.Task;
 
 import java.util.List;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
@@ -20,4 +22,10 @@ public interface TaskServiceApi {
 
     @POST("tasks/v2")
     Call<Task> create(@Body Task taskToCreate);
+
+    @GET("/tasks/v2/{name}")
+    Call<List<Task>> findByName(@Path("name") String name);
+
+    @DELETE("tasks/v2/{id}")
+    Call<ResponseBody> delete(@Path("id") String id);
 }

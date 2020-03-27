@@ -54,6 +54,10 @@ public class Task {
         return id;
     }
 
+    public void setId(@NonNull String id) {
+        this.id = id;
+    }
+
     public Task(@NonNull String name, @NonNull String description, @NonNull Status status) {
         this.name = name;
         this.description = description;

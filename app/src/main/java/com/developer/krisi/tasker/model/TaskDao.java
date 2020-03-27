@@ -40,4 +40,7 @@ public interface TaskDao {
 
     @Update
     void update(Task task);
+
+    @Query("SELECT * FROM tasks WHERE id = (:id)")
+    Task getById(String id);
 }
