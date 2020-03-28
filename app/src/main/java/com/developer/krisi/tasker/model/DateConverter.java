@@ -1,17 +1,30 @@
 package com.developer.krisi.tasker.model;
 
-import java.time.LocalDateTime;
+import java.sql.Timestamp;
+import java.util.Date;
 
 import androidx.room.TypeConverter;
 
 public class DateConverter {
     @TypeConverter
-    public static LocalDateTime fromTimestamp(String value) {
-        return value == null ? null : LocalDateTime.parse(value);
+    public static Date fromTimestamp(String value) {
+        if(value != null) {
+            Long milliseconds = Long.parseLong(value);
+            Timestamp timestamp = new Timestamp(milliseconds);
+            Date date = new Date(timestamp.getTime());
+            return date == null ? null : date;
+        } else {
+            return null;
+        }
     }
 
     @TypeConverter
-    public static String dateToTimestamp(LocalDateTime date) {
-        return date == null ? null : date.toString();
+    public static String dateToTimestamp(Date date) {
+        if(date != null) {
+            Long milliseconds = date.getTime();
+            return milliseconds == null ? null : milliseconds.toString();
+        } else {
+            return null;
+        }
     }
 }

@@ -12,7 +12,7 @@ import androidx.room.RoomDatabase;
 import androidx.room.TypeConverters;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
-@Database(entities = {Task.class}, version = 6)
+@Database(entities = {Task.class}, version = 7)
 @TypeConverters({StatusConverter.class, DateConverter.class, ListConverter.class})
 public abstract class TaskDatabase extends RoomDatabase {
     public static final String TASKS = "tasks";

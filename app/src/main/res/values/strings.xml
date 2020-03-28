@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Tasker</string>
-    <string name="tab_text_1">Tab 1</string>
-    <string name="tab_text_2">Tab 2</string>
+    <string name="tab_text_1">To Do</string>
+    <string name="tab_text_2">Done</string>
 
     <string name="title_activity_add_task">AddTaskActivity</string>
     <string name="dummy_button">Dummy Button</string>
@@ -10,5 +10,6 @@
     <string name="name">Name</string>
     <string name="description">Description</string>
     <string name="create_task_button">Save</string>
+    <string name="priority">Prio</string>
     <string name="empty_not_saved">Empty value - not saved!</string>
 </resources>

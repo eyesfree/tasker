@@ -1,6 +1,6 @@
 package com.developer.krisi.tasker.model;
 
-import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 import androidx.annotation.NonNull;
@@ -8,7 +8,6 @@ import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
-import androidx.room.TypeConverter;
 
 @Entity(tableName = "tasks")
 public class Task {
@@ -37,10 +36,10 @@ public class Task {
     private int priority;
 
     @ColumnInfo(name="dueDate")
-    private LocalDateTime dueDate;
+    private Date dueDate;
 
     @ColumnInfo(name="createdDate")
-    private LocalDateTime createdDate;
+    private Date createdDate;
 
     @ColumnInfo(name="subTasks")
     private List<String> subTasks;
@@ -58,10 +57,11 @@ public class Task {
         this.id = id;
     }
 
-    public Task(@NonNull String name, @NonNull String description, @NonNull Status status) {
+    public Task(@NonNull String name, @NonNull String description, @NonNull Status status, int priority) {
         this.name = name;
         this.description = description;
         this.status = status;
+        this.priority = priority;
     }
 
     public String getName() {
@@ -104,19 +104,19 @@ public class Task {
         this.priority = priority;
     }
 
-    public LocalDateTime getDueDate() {
+    public Date getDueDate() {
         return dueDate;
     }
 
-    public void setDueDate(LocalDateTime dueDate) {
+    public void setDueDate(Date dueDate) {
         this.dueDate = dueDate;
     }
 
-    public LocalDateTime getCreatedDate() {
+    public Date getCreatedDate() {
         return createdDate;
     }
 
-    public void setCreatedDate(LocalDateTime createdDate) {
+    public void setCreatedDate(Date createdDate) {
         this.createdDate = createdDate;
     }
 

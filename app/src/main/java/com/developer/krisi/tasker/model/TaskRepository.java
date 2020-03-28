@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.developer.krisi.tasker.web.service.TaskServiceApi;
 
+import java.util.Calendar;
 import java.util.List;
 
 import androidx.lifecycle.LiveData;
@@ -43,29 +44,6 @@ public class TaskRepository {
         return allTasks;
     }
 
-    private void refreshTasks() {
-        Call<List<Task>> getAll = taskServiceApi.getTasks();;
-        getAll.enqueue(new Callback<List<Task>>() {
-            @Override
-            public void onResponse(Call<List<Task>> call, Response<List<Task>> response) {
-                if(response.isSuccessful()) {
-                    List<Task> tasks = response.body();
-                    for(Task task : tasks) {
-                        Log.i("TaskRepository", "inserting task " + task.getName());
-                        insert(task);
-                    }
-                } else {
-                    Log.w("TaskRepository", "Response code for getAll() " + response.code());
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<Task>> call, Throwable t) {
-                Log.e("TaskRepository", "Response exception " + t.getMessage());
-            }
-        });
-    }
-
     public void insert(Task task){
         if(task.getId() != null) { // this means it comes from the REST Repo
             TaskDatabase.databaseWriteExecutor.execute(() -> {
@@ -80,11 +58,15 @@ public class TaskRepository {
     }
 
     public void insertAfterCreateRemote(Task createdTask) {
-        if(createdTask.getId() != null) {
-            TaskDatabase.databaseWriteExecutor.execute(() -> {
-                this.taskDao.insert(createdTask);
-            });
+        String id = createdTask == null ? null : createdTask.getId();
+        if(id == null) {
+            Log.i("TaskRepository", "Task does not have id, creating one from timestamp.");
+            id = Calendar.getInstance().toString();
+            createdTask.setId(id);
         }
+        TaskDatabase.databaseWriteExecutor.execute(() -> {
+            this.taskDao.insert(createdTask);
+        });
     }
 
     public void delete(final Task task){
@@ -129,12 +111,14 @@ public class TaskRepository {
                     insertAfterCreateRemote(createdTask);
                 } else {
                     Log.w("TaskRepository", "response code for create " + response.code());
+                    insertAfterCreateRemote(null);
                 }
             }
 
             @Override
             public void onFailure(Call<Task> call, Throwable t) {
                 Log.e("TaskRepository", "error by updating database" + t.getMessage());
+                insertAfterCreateRemote(null);
             }
         });
     }
@@ -157,4 +141,28 @@ public class TaskRepository {
             }
         });
     }
+
+    private void refreshTasks() {
+        Call<List<Task>> getAll = taskServiceApi.getTasks();;
+        getAll.enqueue(new Callback<List<Task>>() {
+            @Override
+            public void onResponse(Call<List<Task>> call, Response<List<Task>> response) {
+                if(response.isSuccessful()) {
+                    List<Task> tasks = response.body();
+                    for(Task task : tasks) {
+                        Log.i("TaskRepository", "inserting task " + task.getName());
+                        insert(task);
+                    }
+                } else {
+                    Log.w("TaskRepository", "Response code for getAll() " + response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Task>> call, Throwable t) {
+                Log.e("TaskRepository", "Response exception " + t.getMessage());
+            }
+        });
+    }
+
 }

@@ -27,7 +27,7 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.MyView
 
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        public TextView name, description, status;
+        public TextView name, description, status, priority;
         public ImageView statusImage;
 
         public MyViewHolder(View view) {
@@ -36,6 +36,7 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.MyView
             description = (TextView) view.findViewById(R.id.description);
             status = (TextView) view.findViewById(R.id.status);
             statusImage = (ImageView) view.findViewById(R.id.imageStatus);
+            priority = (TextView) view.findViewById(R.id.priority);
         }
     }
 
@@ -53,6 +54,7 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.MyView
             myViewHolder.name.setText(task.getName());
             myViewHolder.description.setText(task.getDescription());
             myViewHolder.status.setText(task.getStatus().getStatusName());
+            myViewHolder.priority.setText(String.valueOf(task.getPriority()));
             if(task.getStatus().equals(Status.DONE)) {
                 myViewHolder.statusImage.setImageResource(R.drawable.ic_lens_green_24dp);
             } else if (task.getStatus().equals(Status.IN_PROGRESS)){
@@ -65,6 +67,7 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.MyView
             myViewHolder.name.setText("My task");
             myViewHolder.description.setText("none");
             myViewHolder.status.setText("NEW");
+            myViewHolder.priority.setText("1");
         }
     }
 
