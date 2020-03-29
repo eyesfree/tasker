@@ -28,7 +28,8 @@ public class TaskRepository {
         this.allTasks = taskDao.getAll();
 
         retrofit = new Retrofit.Builder()
-                .baseUrl("http://172.17.151.241:8080")
+                //.baseUrl("http://172.17.151.241:8080")
+                .baseUrl("https://task-service.azurewebsites.net")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         taskServiceApi = retrofit.create(TaskServiceApi.class);

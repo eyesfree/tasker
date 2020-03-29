@@ -36,6 +36,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
+    <Spinner
+        android:id="@+id/status_picker"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
     <Button
         android:id="@+id/create_task_button"
         android:layout_width="wrap_content"
@@ -45,4 +50,5 @@
         android:text="@string/create_task_button"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/newTaskDescription" />
+
 </LinearLayout>

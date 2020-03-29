@@ -75,7 +75,7 @@ public class PlaceholderFragment extends Fragment {
             Task task = new Task(
                     data.getStringExtra(AddEditTaskActivity.NAME),
                     data.getStringExtra(AddEditTaskActivity.DESCRIPTION),
-                    Status.NEW,
+                    Status.valueOf(data.getStringExtra(AddEditTaskActivity.STATUS)),
                     data.getIntExtra(AddEditTaskActivity.PRIORITY, 0));
 
             taskViewModel.insert(task);
@@ -84,7 +84,7 @@ public class PlaceholderFragment extends Fragment {
             Task task = new Task(
                     data.getStringExtra(AddEditTaskActivity.NAME),
                     data.getStringExtra(AddEditTaskActivity.DESCRIPTION),
-                    Status.NEW,
+                    Status.valueOf(data.getStringExtra(AddEditTaskActivity.STATUS)),
                     data.getIntExtra(AddEditTaskActivity.PRIORITY, 0));
             task.setId(data.getStringExtra(AddEditTaskActivity.TASK_ID));
 
@@ -124,6 +124,7 @@ public class PlaceholderFragment extends Fragment {
                 intent.putExtra(AddEditTaskActivity.DESCRIPTION, task.getDescription());
                 intent.putExtra(AddEditTaskActivity.PRIORITY, task.getPriority());
                 intent.putExtra(AddEditTaskActivity.TASK_ID, task.getId());
+                intent.putExtra(AddEditTaskActivity.STATUS, task.getStatus().getStatusName());
                 startActivityForResult(intent, EDIT_TASK_ACTIVITY_REQUEST_CODE);
             }
         });
