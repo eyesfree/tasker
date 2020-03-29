@@ -2,7 +2,6 @@ package com.developer.krisi.tasker.model;
 
 import android.app.Application;
 import android.util.Log;
-
 import com.developer.krisi.tasker.web.service.TaskServiceApi;
 
 import java.util.Calendar;
@@ -37,15 +36,15 @@ public class TaskRepository {
 
     LiveData<List<Task>> getAllTasks() {
         boolean needRefresh = true;
-        if(needRefresh) {
+        if (needRefresh) {
             refreshTasks();
         }
 
         return allTasks;
     }
 
-    public void insert(Task task){
-        if(task.getId() != null) { // this means it comes from the REST Repo
+    public void insert(Task task) {
+        if (task.getId() != null) { // this means it comes from the REST Repo
             TaskDatabase.databaseWriteExecutor.execute(() -> {
                 Task tryGetTask = this.taskDao.getById(task.getId());
                 if (tryGetTask == null) {
@@ -59,7 +58,7 @@ public class TaskRepository {
 
     public void insertAfterCreateRemote(Task createdTask) {
         String id = createdTask == null ? null : createdTask.getId();
-        if(id == null) {
+        if (id == null) {
             Log.i("TaskRepository", "Task does not have id, creating one from timestamp.");
             id = Calendar.getInstance().toString();
             createdTask.setId(id);
@@ -69,16 +68,16 @@ public class TaskRepository {
         });
     }
 
-    public void delete(final Task task){
-        TaskDatabase.databaseWriteExecutor.execute(()-> {
+    public void delete(final Task task) {
+        TaskDatabase.databaseWriteExecutor.execute(() -> {
             this.taskDao.delete(task);
         });
 
         deleteRemoteTask(task);
     }
 
-    public void update(final Task task){
-        TaskDatabase.databaseWriteExecutor.execute(()-> {
+    public void update(final Task task) {
+        TaskDatabase.databaseWriteExecutor.execute(() -> {
             this.taskDao.update(task);
         });
 
@@ -90,12 +89,12 @@ public class TaskRepository {
         update.enqueue(new Callback<Task>() {
             @Override
             public void onResponse(Call<Task> call, Response<Task> response) {
-                Log.i("TaskRepository", "updated task in database" + task.getName());
+                Log.i("TaskRepository", "updated task in database " + task.getName());
             }
 
             @Override
             public void onFailure(Call<Task> call, Throwable t) {
-                Log.e("TaskRepository", "error by updating database" + t.getMessage());
+                Log.e("TaskRepository", "error by updating database " + t.getMessage());
             }
         });
     }
@@ -105,20 +104,21 @@ public class TaskRepository {
         create.enqueue(new Callback<Task>() {
             @Override
             public void onResponse(Call<Task> call, Response<Task> response) {
-                if (response.isSuccessful()){
-                    Log.i("TaskRepository", "created task in database" + task.getId());
+                if (response.isSuccessful()) {
                     Task createdTask = response.body();
+                    Log.i("TaskRepository", "created task in database " + createdTask.getId());
                     insertAfterCreateRemote(createdTask);
                 } else {
                     Log.w("TaskRepository", "response code for create " + response.code());
-                    insertAfterCreateRemote(null);
+                    insertAfterCreateRemote(task);
                 }
             }
 
             @Override
             public void onFailure(Call<Task> call, Throwable t) {
                 Log.e("TaskRepository", "error by updating database" + t.getMessage());
-                insertAfterCreateRemote(null);
+
+                insertAfterCreateRemote(task);
             }
         });
     }
@@ -128,7 +128,7 @@ public class TaskRepository {
         delete.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                if (response.isSuccessful()){
+                if (response.isSuccessful()) {
                     Log.i("TaskRepository", "deleted task from database" + task.getId());
                 } else {
                     Log.w("TaskRepository", "response code for delete " + response.code());
@@ -143,13 +143,14 @@ public class TaskRepository {
     }
 
     private void refreshTasks() {
-        Call<List<Task>> getAll = taskServiceApi.getTasks();;
+        Call<List<Task>> getAll = taskServiceApi.getTasks();
+        ;
         getAll.enqueue(new Callback<List<Task>>() {
             @Override
             public void onResponse(Call<List<Task>> call, Response<List<Task>> response) {
-                if(response.isSuccessful()) {
+                if (response.isSuccessful()) {
                     List<Task> tasks = response.body();
-                    for(Task task : tasks) {
+                    for (Task task : tasks) {
                         Log.i("TaskRepository", "inserting task " + task.getName());
                         insert(task);
                     }

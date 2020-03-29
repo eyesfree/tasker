@@ -13,4 +13,5 @@
     <string name="priority">Prio</string>
     <string name="empty_not_saved">Empty value - not saved!</string>
     <string name="save">Save</string>
+    <string name="nothing_edited">No updated values.</string>
 </resources>

@@ -11,7 +11,7 @@
         android:theme="@style/AppTheme"
         android:networkSecurityConfig="@xml/network_security_config">
         <activity
-            android:name=".AddTaskActivity"
+            android:name=".AddEditTaskActivity"
             android:label="@string/title_activity_add_task"
             android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity

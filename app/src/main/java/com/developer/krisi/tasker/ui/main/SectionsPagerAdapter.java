@@ -9,6 +9,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
 import com.developer.krisi.tasker.R;
+import com.developer.krisi.tasker.ui.main.PlaceholderFragment;
 
 /**
  * A [FragmentPagerAdapter] that returns a fragment corresponding to

@@ -21,6 +21,8 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.MyView
     private final LayoutInflater mInflater;
     private List<Task> tasks; // Cached copy of words
 
+    private OnItemClickListener listener;
+
     public TaskListAdapter(Context context) {
         mInflater = LayoutInflater.from(context);
     }
@@ -37,6 +39,16 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.MyView
             status = (TextView) view.findViewById(R.id.status);
             statusImage = (ImageView) view.findViewById(R.id.imageStatus);
             priority = (TextView) view.findViewById(R.id.priority);
+
+            view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int position = getAdapterPosition();
+                    if(listener != null && position != RecyclerView.NO_POSITION) {
+                        listener.onItemClick(tasks.get(position));
+                    }
+                }
+            });
         }
     }
 
@@ -88,10 +100,18 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.MyView
 
     public Task getTaskAt(int position) {
         Log.i(ADAPTER, "Requested task at position " + position);
-        if(position >= 0) {
+        if(position != RecyclerView.NO_POSITION) {
             return tasks.get(position);
         } else {
             return null;
         }
+    }
+
+    public interface OnItemClickListener {
+        void onItemClick(Task task);
+    }
+
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        this.listener = listener;
     }
 }
