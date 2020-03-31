@@ -74,7 +74,9 @@ public class AddEditTaskActivity extends AppCompatActivity implements
             newName.setText(intent.getStringExtra(NAME));
             newDescription.setText(intent.getStringExtra(DESCRIPTION));
             numberPickerPriority.setValue(intent.getIntExtra(PRIORITY, 0));
-            statusPicker.setSelection(adapter.getPosition(intent.getStringExtra(intent.getStringExtra(STATUS))));
+            final String stringExtra = intent.getStringExtra(STATUS);
+            final int position = adapter.getPosition(stringExtra);
+            statusPicker.setSelection(position);
         } else {
             setTitle("Add Task");
         }
