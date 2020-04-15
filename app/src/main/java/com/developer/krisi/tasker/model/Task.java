@@ -57,11 +57,17 @@ public class Task {
         this.id = id;
     }
 
+    @Ignore
     public Task(@NonNull String name, @NonNull String description, @NonNull Status status, int priority) {
         this.name = name;
         this.description = description;
         this.status = status;
         this.priority = priority;
+    }
+
+    public Task(@NonNull String name, @NonNull String description, @NonNull Status status, int priority, Date dueDate) {
+        this(name, description, status, priority);
+        this.dueDate = dueDate;
     }
 
     public String getName() {
@@ -135,7 +141,8 @@ public class Task {
         fullTaskBuilder
                 .append("Name: ").append(name)
                 .append(", Description: ").append(description)
-                .append(" Status: ").append(status);
+                .append(" Status: ").append(status)
+                .append(" Due Date: ").append(dueDate.toString());
         return fullTaskBuilder.toString();
     }
 }

@@ -10,8 +10,11 @@
     <string name="name">Name</string>
     <string name="description">Description</string>
     <string name="create_task_button">Save</string>
+    <string name="delete_task_button">Delete</string>
     <string name="priority">Prio</string>
     <string name="empty_not_saved">Empty value - not saved!</string>
     <string name="save">Save</string>
     <string name="nothing_edited">No updated values.</string>
+    <string name="pick_date">Edit Due</string>
+    <string name="due_date_example">01/12/2020</string>
 </resources>

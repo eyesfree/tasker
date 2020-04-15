@@ -3,7 +3,13 @@ package com.developer.krisi.tasker.model;
 import android.app.Application;
 import android.util.Log;
 import com.developer.krisi.tasker.web.service.TaskServiceApi;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.lang.annotation.Annotation;
 import java.util.Calendar;
 import java.util.List;
 
@@ -11,6 +17,7 @@ import androidx.lifecycle.LiveData;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
+import retrofit2.Converter;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -27,15 +34,19 @@ public class TaskRepository {
         this.taskDao = db.taskDao();
         this.allTasks = taskDao.getAll();
 
+        Gson gson = new GsonBuilder()
+                .setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ")
+                .create();
+
         retrofit = new Retrofit.Builder()
-                //.baseUrl("http://172.17.151.241:8080")
+                //.baseUrl("http://172.17.9.33:8080")
                 .baseUrl("https://task-service.azurewebsites.net")
-                .addConverterFactory(GsonConverterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
         taskServiceApi = retrofit.create(TaskServiceApi.class);
     }
 
-    LiveData<List<Task>> getAllTasks() {
+    public LiveData<List<Task>> getAllTasks() {
         boolean needRefresh = true;
         if (needRefresh) {
             refreshTasks();
@@ -110,8 +121,16 @@ public class TaskRepository {
                     Log.i("TaskRepository", "created task in database " + createdTask.getId());
                     insertAfterCreateRemote(createdTask);
                 } else {
-                    Log.w("TaskRepository", "response code for create " + response.code());
-                    insertAfterCreateRemote(task);
+                    try {
+                        Converter<ResponseBody, ErrorModel> converter = retrofit.responseBodyConverter(ErrorModel.class, new Annotation[0]);
+                        ErrorModel errorModel =  converter.convert(response.errorBody());
+                        Log.w("TaskRepository", errorModel.toString());
+
+                        Log.w("TaskRepository", "response code for create " + response.code());
+                        insertAfterCreateRemote(task);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             }
 

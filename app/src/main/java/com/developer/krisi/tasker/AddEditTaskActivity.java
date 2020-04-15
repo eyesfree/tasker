@@ -1,10 +1,13 @@
 package com.developer.krisi.tasker;
 
+import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.DialogFragment;
 
 import android.text.TextUtils;
 import android.view.Menu;
@@ -14,12 +17,18 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.NumberPicker;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.developer.krisi.tasker.model.Status;
+import com.developer.krisi.tasker.ui.main.DatePickerFragment;
+
+import java.util.Calendar;
+import java.util.Date;
 
 public class AddEditTaskActivity extends AppCompatActivity implements
         AdapterView.OnItemSelectedListener {
@@ -29,12 +38,15 @@ public class AddEditTaskActivity extends AppCompatActivity implements
     public static final String PRIORITY = "com.developer.krisi.tasker.PRIORITY";
     public static final String TASK_ID = "com.developer.krisi.tasker.TASK_ID";
     public static final String STATUS = "com.developer.krisi.tasker.STATUS";
+    public static final String DUE_DATE = "com.developer.krisi.tasker.DUE_DATE";
+    public static final int RESULT_DELETE = 666;
     private EditText newName;
     private EditText newDescription;
     private NumberPicker numberPickerPriority;
     private Spinner statusPicker;
-
     private String selectedStatus;
+    private Date dueDate;
+    private DatePickerFragment datePickerFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +66,22 @@ public class AddEditTaskActivity extends AppCompatActivity implements
         final Button button = findViewById(R.id.create_task_button);
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-                sendResult();
+                sendSaveIntent();
+            }
+        });
+
+        final Button deleteButton = findViewById(R.id.delete_task_button);
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                sendDeleteIntent();
+            }
+        });
+
+        final Button dueDatePicker = findViewById(R.id.due_date_picker);
+        dueDatePicker.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showDatePickerDialog(v);
             }
         });
 
@@ -77,6 +104,15 @@ public class AddEditTaskActivity extends AppCompatActivity implements
             final String stringExtra = intent.getStringExtra(STATUS);
             final int position = adapter.getPosition(stringExtra);
             statusPicker.setSelection(position);
+            final long dateTime = intent.getLongExtra(DUE_DATE, new Date().getTime());
+            TextView dueDate = findViewById(R.id.due_date_value);
+            final Calendar c = Calendar.getInstance();
+            c.setTimeInMillis(dateTime);
+            int year = c.get(Calendar.YEAR);
+            int month = c.get(Calendar.MONTH);
+            int displayMonth = month + 1;
+            int day = c.get(Calendar.DAY_OF_MONTH);
+            dueDate.setText(day + "/" + displayMonth + "/" + year);
         } else {
             setTitle("Add Task");
         }
@@ -93,33 +129,52 @@ public class AddEditTaskActivity extends AppCompatActivity implements
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.save_task:
-                sendResult();
+                sendSaveIntent();
             default:
                 super.onOptionsItemSelected(item);
         }
         return super.onOptionsItemSelected(item);
     }
 
-    private void sendResult() {
+    private void sendSaveIntent() {
         Intent replyIntent = new Intent();
         if (TextUtils.isEmpty(newName.getText())) {
             Toast.makeText(getApplicationContext(), "Please add task name", Toast.LENGTH_LONG).show();
             setResult(RESULT_CANCELED, replyIntent);
         } else {
-            String name = newName.getText().toString();
-            replyIntent.putExtra(NAME, name);
-            String description = newDescription.getText().toString();
-            replyIntent.putExtra(DESCRIPTION, description);
-            int priority = numberPickerPriority.getValue();
-            replyIntent.putExtra(PRIORITY, priority);
-            replyIntent.putExtra(STATUS, selectedStatus);
-            Intent intent = getIntent();
-            String id = intent.getStringExtra(TASK_ID);
-            if (id != null) {
-                replyIntent.putExtra(TASK_ID, id);
-            }
+            fillIntentProperties(replyIntent);
             setResult(RESULT_OK, replyIntent);
         }
+        finish();
+    }
+
+    private void fillIntentProperties(Intent replyIntent) {
+        String name = newName.getText().toString();
+        replyIntent.putExtra(NAME, name);
+        String description = newDescription.getText().toString();
+        replyIntent.putExtra(DESCRIPTION, description);
+        int priority = numberPickerPriority.getValue();
+        replyIntent.putExtra(PRIORITY, priority);
+        replyIntent.putExtra(STATUS, selectedStatus);
+        if(datePickerFragment != null) {
+            this.dueDate = datePickerFragment.getSelectedDate();
+            replyIntent.putExtra(DUE_DATE, dueDate.getTime());
+        } else {
+            this.dueDate = Calendar.getInstance().getTime();
+            replyIntent.putExtra(DUE_DATE, dueDate.getTime());
+        }
+
+        Intent intent = getIntent();
+        String id = intent.getStringExtra(TASK_ID);
+        if (id != null) {
+            replyIntent.putExtra(TASK_ID, id);
+        }
+    }
+
+    private void sendDeleteIntent() {
+        Intent replyIntent = new Intent();
+        fillIntentProperties(replyIntent);
+        setResult(RESULT_DELETE, replyIntent);
         finish();
     }
 
@@ -134,5 +189,15 @@ public class AddEditTaskActivity extends AppCompatActivity implements
     public void onNothingSelected(AdapterView<?> arg0) {
         selectedStatus = Status.NEW.getStatusName();
         Toast.makeText(getApplicationContext(), "Setting default status",Toast.LENGTH_LONG).show();
+    }
+
+    public void showDatePickerDialog(View v) {
+        datePickerFragment = new DatePickerFragment(Calendar.getInstance().getTime());
+        datePickerFragment.show(getSupportFragmentManager(), "datePicker");
+    }
+
+    public void setDueDate(Date inputDate) {
+        this.dueDate = inputDate;
+        Toast.makeText(getApplicationContext(), "Setting date to: " + inputDate, Toast.LENGTH_LONG).show();
     }
 }

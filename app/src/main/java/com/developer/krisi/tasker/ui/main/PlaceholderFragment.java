@@ -24,12 +24,16 @@ import com.developer.krisi.tasker.AddEditTaskActivity;
 import com.developer.krisi.tasker.MainActivity;
 import com.developer.krisi.tasker.R;
 import com.developer.krisi.tasker.effects.CustomTouchCallback;
+import com.developer.krisi.tasker.model.DateConverter;
 import com.developer.krisi.tasker.model.Status;
 import com.developer.krisi.tasker.model.Task;
 import com.developer.krisi.tasker.model.TaskListAdapter;
 import com.developer.krisi.tasker.model.TaskViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -70,31 +74,38 @@ public class PlaceholderFragment extends Fragment {
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        if(data != null) {
+            final long dueDateTimestamp = data.getLongExtra(AddEditTaskActivity.DUE_DATE, 0);
+            Date dueDate = DateConverter.fromTimestamp(dueDateTimestamp);
 
-        if(requestCode == NEW_TASK_ACTIVITY_REQUEST_CODE&& resultCode == Activity.RESULT_OK) {
             Task task = new Task(
                     data.getStringExtra(AddEditTaskActivity.NAME),
                     data.getStringExtra(AddEditTaskActivity.DESCRIPTION),
                     Status.valueOf(data.getStringExtra(AddEditTaskActivity.STATUS)),
-                    data.getIntExtra(AddEditTaskActivity.PRIORITY, 0));
+                    data.getIntExtra(AddEditTaskActivity.PRIORITY, 0),
+                    dueDate);
 
-            taskViewModel.insert(task);
-            Toast.makeText(getContext(), "Task added", Toast.LENGTH_LONG).show();
-        } else if (requestCode == EDIT_TASK_ACTIVITY_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            Task task = new Task(
-                    data.getStringExtra(AddEditTaskActivity.NAME),
-                    data.getStringExtra(AddEditTaskActivity.DESCRIPTION),
-                    Status.valueOf(data.getStringExtra(AddEditTaskActivity.STATUS)),
-                    data.getIntExtra(AddEditTaskActivity.PRIORITY, 0));
-            task.setId(data.getStringExtra(AddEditTaskActivity.TASK_ID));
+            if (data.getStringExtra(AddEditTaskActivity.TASK_ID) != null) {
+                task.setId(data.getStringExtra(AddEditTaskActivity.TASK_ID));
+            }
 
-            taskViewModel.update(task);
-            Toast.makeText(getContext(), "Task updated", Toast.LENGTH_LONG).show();
-        } else {
-            Toast.makeText(
-                    getContext(),
-                    R.string.nothing_edited,
-                    Toast.LENGTH_LONG).show();
+            if (requestCode == EDIT_TASK_ACTIVITY_REQUEST_CODE && resultCode == AddEditTaskActivity.RESULT_DELETE) {
+                taskViewModel.delete(task);
+            } else if (requestCode == NEW_TASK_ACTIVITY_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+                taskViewModel.insert(task);
+                Toast.makeText(getContext(), "Task added", Toast.LENGTH_LONG).show();
+            } else if (requestCode == EDIT_TASK_ACTIVITY_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+
+                task.setId(data.getStringExtra(AddEditTaskActivity.TASK_ID));
+
+                taskViewModel.update(task);
+                Toast.makeText(getContext(), "Task updated", Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(
+                        getContext(),
+                        R.string.nothing_edited,
+                        Toast.LENGTH_LONG).show();
+            }
         }
     }
 
@@ -125,6 +136,9 @@ public class PlaceholderFragment extends Fragment {
                 intent.putExtra(AddEditTaskActivity.PRIORITY, task.getPriority());
                 intent.putExtra(AddEditTaskActivity.TASK_ID, task.getId());
                 intent.putExtra(AddEditTaskActivity.STATUS, task.getStatus().getStatusName());
+                if(task.getDueDate() != null) {
+                    intent.putExtra(AddEditTaskActivity.DUE_DATE, task.getDueDate().getTime());
+                }
                 startActivityForResult(intent, EDIT_TASK_ACTIVITY_REQUEST_CODE);
             }
         });

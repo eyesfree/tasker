@@ -1,6 +1,11 @@
 package com.developer.krisi.tasker;
 
+import com.developer.krisi.tasker.model.DateConverter;
+
 import org.junit.Test;
+
+import java.util.Calendar;
+import java.util.Date;
 
 import static org.junit.Assert.*;
 
@@ -11,7 +16,11 @@ import static org.junit.Assert.*;
  */
 public class ExampleUnitTest {
     @Test
-    public void addition_isCorrect() {
-        assertEquals(4, 2 + 2);
+    public void testDateConverter() {
+        Calendar today = Calendar.getInstance();
+        Date rightNow = today.getTime();
+        String timestamp = DateConverter.dateToTimestamp(rightNow);
+        Date converted = DateConverter.fromTimestamp(timestamp);
+        assertEquals(converted, rightNow);
     }
 }

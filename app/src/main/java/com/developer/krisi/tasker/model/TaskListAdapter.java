@@ -19,7 +19,7 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.MyView
     private static final String ADAPTER = "TaskListAdapter";
 
     private final LayoutInflater mInflater;
-    private List<Task> tasks; // Cached copy of words
+    private List<Task> tasks; // Cached copy of tasks
 
     private OnItemClickListener listener;
 

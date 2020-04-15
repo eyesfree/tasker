@@ -1,6 +1,7 @@
 package com.developer.krisi.tasker.model;
 
 import java.sql.Timestamp;
+import java.util.Calendar;
 import java.util.Date;
 
 import androidx.room.TypeConverter;
@@ -11,11 +12,16 @@ public class DateConverter {
         if(value != null) {
             Long milliseconds = Long.parseLong(value);
             Timestamp timestamp = new Timestamp(milliseconds);
-            Date date = new Date(timestamp.getTime());
-            return date == null ? null : date;
+            return timestamp == null ? null : timestamp;
         } else {
             return null;
         }
+    }
+
+    @TypeConverter
+    public static Date fromTimestamp(long milliseconds) {
+        Timestamp timestamp = new Timestamp(milliseconds);
+        return timestamp == null ? null : timestamp;
     }
 
     @TypeConverter
