@@ -6,9 +6,6 @@ import com.developer.krisi.tasker.web.service.TaskServiceApi;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.lang.annotation.Annotation;
 import java.util.Calendar;
 import java.util.List;
@@ -55,12 +52,18 @@ public class TaskRepository {
         return allTasks;
     }
 
-    public void insert(Task task) {
+    public void insertOrUpdate(Task task) {
         if (task.getId() != null) { // this means it comes from the REST Repo
             TaskDatabase.databaseWriteExecutor.execute(() -> {
                 Task tryGetTask = this.taskDao.getById(task.getId());
                 if (tryGetTask == null) {
+                    Log.i("TaskRepository", "inserting task " + task.getName());
+
                     this.taskDao.insert(task);
+                } else {
+                    Log.i("TaskRepository", "updating task " + task.getName() + " with status " + task.getStatus());
+
+                    this.taskDao.update(task);
                 }
             });
         } else {
@@ -75,7 +78,7 @@ public class TaskRepository {
             id = Calendar.getInstance().toString();
             createdTask.setId(id);
         }
-        insert(createdTask); // instead of writing a separate method, reuse the one above
+        insertOrUpdate(createdTask); // instead of writing a separate method, reuse the one above
     }
 
     public void delete(final Task task) {
@@ -160,17 +163,17 @@ public class TaskRepository {
         });
     }
 
-    private void refreshTasks() {
+    public void refreshTasks() {
+        Log.d("TaskRepository", "Calling REST Api for getAll() ");
         Call<List<Task>> getAll = taskServiceApi.getTasks();
-        ;
+
         getAll.enqueue(new Callback<List<Task>>() {
             @Override
             public void onResponse(Call<List<Task>> call, Response<List<Task>> response) {
                 if (response.isSuccessful()) {
                     List<Task> tasks = response.body();
                     for (Task task : tasks) {
-                        Log.i("TaskRepository", "inserting task " + task.getName());
-                        insert(task);
+                        insertOrUpdate(task);
                     }
                 } else {
                     Log.w("TaskRepository", "Response code for getAll() " + response.code());

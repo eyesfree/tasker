@@ -9,7 +9,7 @@ class TaskViewModel(application: Application) : AndroidViewModel(application) {
     val allTasks: LiveData<List<Task>>
 
     fun insert(task: Task?) {
-        repository.insert(task)
+        repository.insertOrUpdate(task)
     }
 
     fun delete(task: Task?) {
@@ -18,6 +18,10 @@ class TaskViewModel(application: Application) : AndroidViewModel(application) {
 
     fun update(task: Task?) {
         repository.update(task)
+    }
+
+    fun refresh() {
+        repository.refreshTasks()
     }
 
     init {

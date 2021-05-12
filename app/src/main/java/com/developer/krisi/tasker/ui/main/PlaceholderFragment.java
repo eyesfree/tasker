@@ -32,6 +32,7 @@ import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -47,6 +48,7 @@ public class PlaceholderFragment extends Fragment {
     private TaskViewModel taskViewModel;
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
+    private SwipeRefreshLayout swipeContainer;
 
     public static PlaceholderFragment newInstance(int index) {
         PlaceholderFragment fragment = new PlaceholderFragment();
@@ -61,6 +63,10 @@ public class PlaceholderFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         taskViewModel = ViewModelProviders.of(this).get(TaskViewModel.class);
+        getAllTasks();
+    }
+
+    private void getAllTasks() {
         taskViewModel.getAllTasks().observe(this, tasks -> {
             int sectionNumber = this.getArguments().getInt(ARG_SECTION_NUMBER);
 
@@ -69,13 +75,14 @@ public class PlaceholderFragment extends Fragment {
                 desiredStatusesToDoTab.add(Status.NEW);
                 desiredStatusesToDoTab.add(Status.IN_PROGRESS);
                 taskListAdapter.setTasks(tasks, desiredStatusesToDoTab);
+                swipeContainer.setRefreshing(false);
             } else if(sectionNumber == 2) {
                 List<Status> desiredStatusesDoneTab = new ArrayList<>();
                 desiredStatusesDoneTab.add(Status.DONE);
                 taskListAdapter.setTasks(tasks, desiredStatusesDoneTab);
+                swipeContainer.setRefreshing(false);
             }
         });
-
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -133,6 +140,8 @@ public class PlaceholderFragment extends Fragment {
         ItemTouchHelper helper = new ItemTouchHelper(callback);
         helper.attachToRecyclerView(recyclerView);
 
+        swipeContainer = (SwipeRefreshLayout) root.findViewById(R.id.swipeContainer);
+
         taskListAdapter.setOnItemClickListener(new TaskListAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(Task task) {
@@ -158,6 +167,20 @@ public class PlaceholderFragment extends Fragment {
                 startActivityForResult(intent, NEW_TASK_ACTIVITY_REQUEST_CODE);
             }
         });
+
+        // Setup refresh listener which triggers new data loading
+        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                taskViewModel.refresh();
+                getAllTasks();
+            }
+        });
+        // Configure the refreshing colors
+        swipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
 
         return root;
     }
