@@ -1,6 +1,7 @@
 package com.developer.krisi.tasker.model;
 
 import android.content.Context;
+import android.os.Build;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,10 +10,18 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.RecyclerView;
 import com.developer.krisi.tasker.R;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.MyViewHolder> {
 
@@ -92,10 +101,35 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.MyView
         }
     }
 
-    public void setTasks(List<Task> inputTasks) {
-        Log.i(ADAPTER, "Setting all tasks");
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    public void setTasks(List<Task> inputTasks, List<Status> desiredTaskStatus) {
         tasks = inputTasks;
+        List<Task> tasksWithDesiredStatus = filterByStatus(desiredTaskStatus);
+        Log.i(ADAPTER, "Setting tasks for tab with status: " + join(desiredTaskStatus));
+        tasks = tasksWithDesiredStatus;
+        Log.d(ADAPTER, "Sort tasks by priority ");
+        Collections.sort(tasks, new CompareByPriority());
+
         notifyDataSetChanged();
+    }
+
+    @NotNull
+    private List<Task> filterByStatus(List<Status> desiredTaskStatus) {
+        List<Task> selectedTasks = new ArrayList<>();
+        for (Task task : tasks) {
+            if(desiredTaskStatus.contains(task.getStatus())) {
+                selectedTasks.add(task);
+            }
+        }
+        return selectedTasks;
+    }
+
+    public static String join(List<Status> items){
+        String statuses = "";
+        for (Status status : items) {
+           statuses += status + " ";
+        }
+        return statuses;
     }
 
     public Task getTaskAt(int position) {

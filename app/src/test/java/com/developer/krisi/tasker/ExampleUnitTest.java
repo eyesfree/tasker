@@ -4,16 +4,19 @@ import com.developer.krisi.tasker.model.DateConverter;
 
 import org.junit.Test;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
 import static org.junit.Assert.*;
 
 /**
- * Example local unit test, which will execute on the development machine (host).
+ * Small - unit tests
  *
  * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
  */
+
+
 public class ExampleUnitTest {
     @Test
     public void testDateConverter() {
@@ -21,6 +24,8 @@ public class ExampleUnitTest {
         Date rightNow = today.getTime();
         String timestamp = DateConverter.dateToTimestamp(rightNow);
         Date converted = DateConverter.fromTimestamp(timestamp);
-        assertEquals(converted, rightNow);
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+        assertEquals(formatter.format(converted), formatter.format(rightNow));
     }
 }

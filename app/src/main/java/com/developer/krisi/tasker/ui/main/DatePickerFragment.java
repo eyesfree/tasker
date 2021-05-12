@@ -3,12 +3,9 @@ package com.developer.krisi.tasker.ui.main;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.os.Bundle;
-import android.widget.Button;
 import android.widget.DatePicker;
-import android.widget.EditText;
 import android.widget.TextView;
 
-import com.developer.krisi.tasker.AddEditTaskActivity;
 import com.developer.krisi.tasker.R;
 
 import java.util.Calendar;

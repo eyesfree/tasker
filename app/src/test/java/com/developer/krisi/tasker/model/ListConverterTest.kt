@@ -1,5 +1,5 @@
 import com.developer.krisi.tasker.model.ListConverter
-import junit.framework.Assert.assertEquals
+import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class ListConverterTest {
@@ -11,7 +11,7 @@ class ListConverterTest {
                 "fun", "tests", "java", "kotlin"
         )
         // Call your function
-        val listString = ListConverter.fromArrayList(tasks);
+        val listString = ListConverter.fromArrayList(tasks)
         // Check the result
         assertEquals("[\"fun\",\"tests\",\"java\",\"kotlin\"]", listString)
     }
@@ -25,7 +25,7 @@ class ListConverterTest {
 
         val tasksString = "[\"fun\",\"tests\",\"java\",\"kotlin\"]"
         // Call your function
-        val actualList = ListConverter.fromString(tasksString);
+        val actualList = ListConverter.fromString(tasksString)
         // Check the result
         assertEquals(expectedList, actualList)
     }

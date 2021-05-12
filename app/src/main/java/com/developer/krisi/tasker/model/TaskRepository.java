@@ -75,9 +75,7 @@ public class TaskRepository {
             id = Calendar.getInstance().toString();
             createdTask.setId(id);
         }
-        TaskDatabase.databaseWriteExecutor.execute(() -> {
-            this.taskDao.insert(createdTask);
-        });
+        insert(createdTask); // instead of writing a separate method, reuse the one above
     }
 
     public void delete(final Task task) {

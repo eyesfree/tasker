@@ -1,6 +1,8 @@
 package com.developer.krisi.tasker;
 
 
+import android.os.Build;
+
 import androidx.lifecycle.LiveData;
 
 import com.developer.krisi.tasker.model.Task;
@@ -10,13 +12,15 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.robolectric.annotation.Config;
 
 import java.util.List;
 
 import static junit.framework.TestCase.assertEquals;
-import static com.developer.krisi.tasker.LiveDataTestUtil.getOrAwaitValue;
 
+// Medium: integration test
 @RunWith(MockitoJUnitRunner.class)
+@Config(maxSdk = Build.VERSION_CODES.P)
 public class TasksViewModelTest {
     @Mock
     TaskViewModel taskModel;
@@ -26,7 +30,6 @@ public class TasksViewModelTest {
 
         taskModel.insert(new Task());
         LiveData<List<Task>> allTasks = taskModel.getAllTasks();
-        getOrAwaitValue(allTasks);
 
         if(allTasks != null) {
             int size = allTasks.getValue().size();

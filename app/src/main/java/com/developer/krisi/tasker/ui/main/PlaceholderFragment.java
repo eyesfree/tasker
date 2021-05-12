@@ -1,8 +1,8 @@
 package com.developer.krisi.tasker.ui.main;
 
 import android.app.Activity;
-import android.app.Instrumentation;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -10,18 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import androidx.annotation.Nullable;
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
-import androidx.recyclerview.widget.DefaultItemAnimator;
-import androidx.recyclerview.widget.ItemTouchHelper;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import com.developer.krisi.tasker.AddEditTaskActivity;
-import com.developer.krisi.tasker.MainActivity;
 import com.developer.krisi.tasker.R;
 import com.developer.krisi.tasker.effects.CustomTouchCallback;
 import com.developer.krisi.tasker.model.DateConverter;
@@ -31,10 +20,18 @@ import com.developer.krisi.tasker.model.TaskListAdapter;
 import com.developer.krisi.tasker.model.TaskViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -59,14 +56,23 @@ public class PlaceholderFragment extends Fragment {
         return fragment;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         taskViewModel = ViewModelProviders.of(this).get(TaskViewModel.class);
-        taskViewModel.getAllTasks().observe(this, new Observer<List<Task>>(){
-            @Override
-            public void onChanged(@Nullable final List<Task> tasks) {
-                taskListAdapter.setTasks(tasks);
+        taskViewModel.getAllTasks().observe(this, tasks -> {
+            int sectionNumber = this.getArguments().getInt(ARG_SECTION_NUMBER);
+
+            if(sectionNumber == 1) {
+                List<Status> desiredStatusesToDoTab = new ArrayList<>();
+                desiredStatusesToDoTab.add(Status.NEW);
+                desiredStatusesToDoTab.add(Status.IN_PROGRESS);
+                taskListAdapter.setTasks(tasks, desiredStatusesToDoTab);
+            } else if(sectionNumber == 2) {
+                List<Status> desiredStatusesDoneTab = new ArrayList<>();
+                desiredStatusesDoneTab.add(Status.DONE);
+                taskListAdapter.setTasks(tasks, desiredStatusesDoneTab);
             }
         });
 
