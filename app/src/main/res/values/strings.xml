@@ -17,4 +17,5 @@
     <string name="nothing_edited">No updated values.</string>
     <string name="pick_date">Edit Due</string>
     <string name="due_date_example">01/12/2020</string>
+    <string name="UndoText">UNDO</string>
 </resources>
