@@ -1,6 +1,7 @@
 package com.developer.krisi.tasker;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -15,12 +16,15 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
     private static final String PROJECT_ID = SelectProjectActivity.PROJECT_ID;
+    private static final String PROJECT_NAME = SelectProjectActivity.PROJECT_NAME;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Intent intent = getIntent();
         String projectId = intent.getStringExtra(PROJECT_ID);
+        String projectName = intent.getStringExtra(PROJECT_NAME);
+        this.setTitle(projectName);
         Log.i(TAG, "Creating view for MainActivity");
         setContentView(R.layout.activity_main);
         SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager(), projectId);

@@ -31,6 +31,13 @@ public class TaskRepository {
         this.taskDao = db.taskDao();
         this.allTasks = taskDao.getAll(projectId);
 
+        if(this.allTasks != null) {
+            if(this.allTasks.getValue() != null) {
+                int numberOfTasks = this.allTasks.getValue().size();
+                Log.i("TaskRepository", "number of tasks found in local database " + numberOfTasks);
+            }
+        }
+
         Gson gson = new GsonBuilder()
                 .setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ")
                 .create();
@@ -70,7 +77,6 @@ public class TaskRepository {
                     this.taskDao.insert(task);
                 } else {
                     Log.i("TaskRepository", "updating task " + task.getName() + " with status " + task.getStatus() + " with project " + task.getProjectId());
-
                     this.taskDao.update(task);
                 }
             });
@@ -198,7 +204,7 @@ public class TaskRepository {
     public void findTasksByProject(String projectId) {
         Log.d("TaskRepository", "Calling REST Api for findByProjectId() with " + projectId);
         if(projectId.isEmpty()) {
-            Log.d("TaskRepository", "no projectId set yet - returning ");
+            Log.i("TaskRepository", "no projectId set yet - returning ");
             return;
         }
         Call<List<Task>> allByProject = taskServiceApi.findByProjectId(projectId);
@@ -209,6 +215,7 @@ public class TaskRepository {
                 if (response.isSuccessful()) {
                     List<Task> tasks = response.body();
                     for (Task task : tasks) {
+                        Log.i("TaskRepository", "updating with task " + task.getName());
                         insertOrUpdate(task);
                     }
                 } else {

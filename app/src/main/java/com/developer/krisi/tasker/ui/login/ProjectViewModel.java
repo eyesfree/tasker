@@ -110,7 +110,6 @@ public class ProjectViewModel extends AndroidViewModel {
                 return response.body();
             } catch (IOException e) {
                 Log.e(TAG, "error in getting response from service using retrofit");
-                loginResult.setValue(new LoginResult(R.string.login_failed));
             }
             return null;
         }
@@ -122,6 +121,8 @@ public class ProjectViewModel extends AndroidViewModel {
             if (result != null) {
                 Log.e(TAG, "use the created project");
                 loginResult.setValue(new LoginResult(new LoggedInUserView(result.getId(), result.getName())));
+            } else {
+                loginResult.setValue(new LoginResult(R.string.login_failed));
             }
         }
     }
@@ -153,7 +154,6 @@ public class ProjectViewModel extends AndroidViewModel {
                 return response.body();
             } catch (IOException e) {
                 Log.e(TAG, "error in getting response from service using retrofit");
-                loginResult.setValue(new LoginResult(R.string.login_failed));
             }
             return null;
         }
@@ -165,6 +165,8 @@ public class ProjectViewModel extends AndroidViewModel {
             if (result != null) {
                 Log.e(TAG, "use the received project");
                 loginResult.setValue(new LoginResult(new LoggedInUserView(result.getId(), result.getName())));
+            } else {
+                loginResult.setValue(new LoginResult(R.string.login_failed));
             }
         }
     }

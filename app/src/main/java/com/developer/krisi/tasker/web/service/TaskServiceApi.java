@@ -24,8 +24,8 @@ public interface TaskServiceApi {
     @POST("tasks/v2")
     Call<Task> create(@Body Task taskToCreate);
 
-    @GET("/tasks/search/findByProjectId")
-    Call<List<Task>> findByProjectId(@Query("projectId") String projectId);
+    @GET("tasks/v2/findByProject/{projectId}")
+    Call<List<Task>> findByProjectId(@Path("projectId") String projectId);
 
     @GET("/tasks/v2/{name}")
     Call<List<Task>> findByName(@Path("name") String name);

@@ -68,13 +68,12 @@ public class PlaceholderFragment extends Fragment {
         String selectedProjectId = this.getArguments().getString(SELECTED_PROJECT_ID);
         taskViewModel = ViewModelProviders.of(this, new TaskViewModelFactory(getActivity().getApplication(), selectedProjectId)).get(TaskViewModel.class);
         taskViewModel.setProjectId(selectedProjectId);
+        taskViewModel.getAllTasks();
         getAllTasks();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void getAllTasks() {
-
-        String selectedProjectId = this.getArguments().getString(SELECTED_PROJECT_ID);
         taskViewModel.getAllTasks().observe(this, tasks -> {
             int sectionNumber = this.getArguments().getInt(ARG_SECTION_NUMBER);
 
@@ -182,7 +181,7 @@ public class PlaceholderFragment extends Fragment {
             @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void onRefresh() {
-                taskViewModel.refresh();
+                taskViewModel.getAllTasks();
                 getAllTasks();
             }
         });
