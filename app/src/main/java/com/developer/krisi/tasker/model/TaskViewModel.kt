@@ -4,8 +4,9 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 
-class TaskViewModel(application: Application) : AndroidViewModel(application) {
-    private val repository: TaskRepository = TaskRepository(application)
+class TaskViewModel(application: Application, selectedProjectId: String) : AndroidViewModel(application) {
+    var projectId: String = selectedProjectId
+    private val repository: TaskRepository = TaskRepository(application, selectedProjectId)
     val allTasks: LiveData<List<Task>>
 
     fun insert(task: Task?) {
@@ -24,7 +25,11 @@ class TaskViewModel(application: Application) : AndroidViewModel(application) {
         repository.refreshTasks()
     }
 
+    private fun getAllTasksByProject(projectId: String): LiveData<List<Task>> {
+        return repository.getAllTasksByProject(projectId)
+    }
+
     init {
-        allTasks = repository.allTasks
+        allTasks = getAllTasksByProject(projectId)
     }
 }

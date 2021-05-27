@@ -26,10 +26,10 @@ public class TaskRepository {
     TaskServiceApi taskServiceApi;
 
 
-    public TaskRepository(Application application) {
+    public TaskRepository(Application application, String projectId) {
         TaskDatabase db = TaskDatabase.getDatabase(application);
         this.taskDao = db.taskDao();
-        this.allTasks = taskDao.getAll();
+        this.allTasks = taskDao.getAll(projectId);
 
         Gson gson = new GsonBuilder()
                 .setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ")
@@ -52,16 +52,24 @@ public class TaskRepository {
         return allTasks;
     }
 
+    public LiveData<List<Task>> getAllTasksByProject(String projectId) {
+        findTasksByProject(projectId);
+        return allTasks;
+    }
+
     public void insertOrUpdate(Task task) {
         if (task.getId() != null) { // this means it comes from the REST Repo
             TaskDatabase.databaseWriteExecutor.execute(() -> {
                 Task tryGetTask = this.taskDao.getById(task.getId());
                 if (tryGetTask == null) {
                     Log.i("TaskRepository", "inserting task " + task.getName());
-
+                    if(task.projectId == null) {
+                        Log.e("TaskRepository", "task has no project! " + task.getName());
+                        return;
+                    }
                     this.taskDao.insert(task);
                 } else {
-                    Log.i("TaskRepository", "updating task " + task.getName() + " with status " + task.getStatus());
+                    Log.i("TaskRepository", "updating task " + task.getName() + " with status " + task.getStatus() + " with project " + task.getProjectId());
 
                     this.taskDao.update(task);
                 }
@@ -183,6 +191,34 @@ public class TaskRepository {
             @Override
             public void onFailure(Call<List<Task>> call, Throwable t) {
                 Log.e("TaskRepository", "Response exception " + t.getMessage());
+            }
+        });
+    }
+
+    public void findTasksByProject(String projectId) {
+        Log.d("TaskRepository", "Calling REST Api for findByProjectId() with " + projectId);
+        if(projectId.isEmpty()) {
+            Log.d("TaskRepository", "no projectId set yet - returning ");
+            return;
+        }
+        Call<List<Task>> allByProject = taskServiceApi.findByProjectId(projectId);
+
+        allByProject.enqueue(new Callback<List<Task>>() {
+            @Override
+            public void onResponse(Call<List<Task>> call, Response<List<Task>> response) {
+                if (response.isSuccessful()) {
+                    List<Task> tasks = response.body();
+                    for (Task task : tasks) {
+                        insertOrUpdate(task);
+                    }
+                } else {
+                    Log.w("TaskRepository", "Response code for findByProjectId() " + response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Task>> call, Throwable t) {
+                Log.e("TaskRepository", "Response exception findByProjectId " + t.getMessage());
             }
         });
     }

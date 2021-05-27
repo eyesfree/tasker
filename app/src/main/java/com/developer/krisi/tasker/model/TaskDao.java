@@ -17,8 +17,8 @@ public interface TaskDao {
      * up-to date Wearables ordered alphabetically.
      * @return List<Task>
      */
-    @Query("SELECT * FROM tasks ORDER BY name ASC")
-    LiveData<List<Task>> getAll();
+    @Query("SELECT * FROM tasks WHERE projectId = (:projectId) ORDER BY name ASC")
+    LiveData<List<Task>> getAll(String projectId);
 
     @Query("SELECT * FROM tasks WHERE id IN (:ids)")
     List<Task> loadAllByIds(int[] ids);

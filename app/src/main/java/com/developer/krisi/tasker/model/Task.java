@@ -21,6 +21,10 @@ public class Task {
     @NonNull
     public String name;
 
+    @ColumnInfo(name="projectId")
+    @NonNull
+    public String projectId;
+
     @ColumnInfo(name="description")
     @NonNull
     public String description;
@@ -65,9 +69,10 @@ public class Task {
         this.priority = priority;
     }
 
-    public Task(@NonNull String name, @NonNull String description, @NonNull Status status, int priority, Date dueDate) {
+    public Task(@NonNull String name, @NonNull String description, @NonNull Status status, int priority, Date dueDate, String projectId) {
         this(name, description, status, priority);
         this.dueDate = dueDate;
+        this.projectId = projectId;
     }
 
     public String getName() {
@@ -76,6 +81,15 @@ public class Task {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @NonNull
+    public String getProjectId() {
+        return projectId;
+    }
+
+    public void setProjectId(@NonNull String projectId) {
+        this.projectId = projectId;
     }
 
     public String getDescription() {

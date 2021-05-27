@@ -18,6 +18,7 @@ import com.developer.krisi.tasker.model.Status;
 import com.developer.krisi.tasker.model.Task;
 import com.developer.krisi.tasker.model.TaskListAdapter;
 import com.developer.krisi.tasker.model.TaskViewModel;
+import com.developer.krisi.tasker.model.TaskViewModelFactory;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
@@ -41,6 +42,7 @@ public class PlaceholderFragment extends Fragment {
 
     private static final String TAG = "TabFragment";
     private static final String ARG_SECTION_NUMBER = "section_number";
+    private static final String SELECTED_PROJECT_ID = "selected_project";
     public static final int NEW_TASK_ACTIVITY_REQUEST_CODE = 1;
     public static final int EDIT_TASK_ACTIVITY_REQUEST_CODE = 2;
 
@@ -50,10 +52,11 @@ public class PlaceholderFragment extends Fragment {
     private RecyclerView.LayoutManager layoutManager;
     private SwipeRefreshLayout swipeContainer;
 
-    public static PlaceholderFragment newInstance(int index) {
+    public static PlaceholderFragment newInstance(int index, String projectId) {
         PlaceholderFragment fragment = new PlaceholderFragment();
         Bundle bundle = new Bundle();
         bundle.putInt(ARG_SECTION_NUMBER, index);
+        bundle.putString(SELECTED_PROJECT_ID, projectId);
         fragment.setArguments(bundle);
         return fragment;
     }
@@ -62,11 +65,16 @@ public class PlaceholderFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        taskViewModel = ViewModelProviders.of(this).get(TaskViewModel.class);
+        String selectedProjectId = this.getArguments().getString(SELECTED_PROJECT_ID);
+        taskViewModel = ViewModelProviders.of(this, new TaskViewModelFactory(getActivity().getApplication(), selectedProjectId)).get(TaskViewModel.class);
+        taskViewModel.setProjectId(selectedProjectId);
         getAllTasks();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     private void getAllTasks() {
+
+        String selectedProjectId = this.getArguments().getString(SELECTED_PROJECT_ID);
         taskViewModel.getAllTasks().observe(this, tasks -> {
             int sectionNumber = this.getArguments().getInt(ARG_SECTION_NUMBER);
 
@@ -90,13 +98,14 @@ public class PlaceholderFragment extends Fragment {
         if(data != null) {
             final long dueDateTimestamp = data.getLongExtra(AddEditTaskActivity.DUE_DATE, 0);
             Date dueDate = DateConverter.fromTimestamp(dueDateTimestamp);
+            String projectId = this.getArguments().getString(SELECTED_PROJECT_ID);
 
             Task task = new Task(
                     data.getStringExtra(AddEditTaskActivity.NAME),
                     data.getStringExtra(AddEditTaskActivity.DESCRIPTION),
                     Status.valueOf(data.getStringExtra(AddEditTaskActivity.STATUS)),
                     data.getIntExtra(AddEditTaskActivity.PRIORITY, 0),
-                    dueDate);
+                    dueDate, projectId);
 
             if (data.getStringExtra(AddEditTaskActivity.TASK_ID) != null) {
                 task.setId(data.getStringExtra(AddEditTaskActivity.TASK_ID));
@@ -170,6 +179,7 @@ public class PlaceholderFragment extends Fragment {
 
         // Setup refresh listener which triggers new data loading
         swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void onRefresh() {
                 taskViewModel.refresh();

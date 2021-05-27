@@ -1,37 +1,36 @@
-package com.developer.krisi.tasker.model;
+package com.developer.krisi.tasker.data.model;
 
 import android.content.Context;
+
+import com.developer.krisi.tasker.model.TaskDatabase;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import androidx.annotation.NonNull;
-import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
-import androidx.room.TypeConverters;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
-@Database(entities = {Task.class}, version = 8)
-@TypeConverters({StatusConverter.class, DateConverter.class, ListConverter.class})
-public abstract class TaskDatabase extends RoomDatabase {
-    public static final String TASKS = "tasks";
+public abstract class ProjectDatabase extends RoomDatabase {
+
+    public static final String PROJECT = "tasksProject";
 
     public static final Integer NUMBER_OF_THREADS = 4;
 
-    public abstract TaskDao taskDao();
+    public abstract ProjectDao projectDao();
 
-    private static volatile TaskDatabase INSTANCE;
+    private static volatile ProjectDatabase INSTANCE;
 
-    static final ExecutorService databaseWriteExecutor =
+    public static final ExecutorService taskDatabaseWriteExecutor =
             Executors.newFixedThreadPool(NUMBER_OF_THREADS);
 
-    static TaskDatabase getDatabase(final Context context) {
+    public static ProjectDatabase getDatabase(final Context context) {
         if(INSTANCE == null) {
             synchronized (TaskDatabase.class) {
                 if(INSTANCE == null) {
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
-                            TaskDatabase.class, TASKS).addCallback(sRoomDatabaseCallback).build();
+                            ProjectDatabase.class, PROJECT).addCallback(sRoomDatabaseCallback).build();
 
                 }
             }
@@ -46,9 +45,10 @@ public abstract class TaskDatabase extends RoomDatabase {
                 @Override
                 public void onOpen (@NonNull SupportSQLiteDatabase db){
                     super.onOpen(db);
-                    databaseWriteExecutor.execute(()->{
-                        TaskDao taskDao = INSTANCE.taskDao();
+                    taskDatabaseWriteExecutor.execute(()->{
+                        ProjectDao projectDao = INSTANCE.projectDao();
                     });
                 }
             };
+
 }
