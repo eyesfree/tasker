@@ -24,6 +24,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
@@ -94,14 +95,23 @@ public class PlaceholderFragment extends Fragment {
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode == AddEditTaskActivity.RESULT_CANCELED) {
+            Toast.makeText(
+                    getContext(),
+                    R.string.nothing_edited,
+                    Toast.LENGTH_LONG).show();
+            return;
+        }
+
         if(data != null) {
             final long dueDateTimestamp = data.getLongExtra(AddEditTaskActivity.DUE_DATE, 0);
             Date dueDate = DateConverter.fromTimestamp(dueDateTimestamp);
             String projectId = this.getArguments().getString(SELECTED_PROJECT_ID);
 
             Task task = new Task(
-                    data.getStringExtra(AddEditTaskActivity.NAME),
-                    data.getStringExtra(AddEditTaskActivity.DESCRIPTION),
+                    Objects.requireNonNull(data.getStringExtra(AddEditTaskActivity.NAME)),
+                    Objects.requireNonNull(data.getStringExtra(AddEditTaskActivity.DESCRIPTION)),
                     Status.valueOf(data.getStringExtra(AddEditTaskActivity.STATUS)),
                     data.getIntExtra(AddEditTaskActivity.PRIORITY, 0),
                     dueDate, projectId);

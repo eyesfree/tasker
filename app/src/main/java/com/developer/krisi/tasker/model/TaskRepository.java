@@ -9,8 +9,10 @@ import com.google.gson.GsonBuilder;
 import java.lang.annotation.Annotation;
 import java.util.Calendar;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import androidx.lifecycle.LiveData;
+import okhttp3.OkHttpClient;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -38,6 +40,11 @@ public class TaskRepository {
             }
         }
 
+        final OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                .readTimeout(60, TimeUnit.SECONDS)
+                .connectTimeout(60, TimeUnit.SECONDS)
+                .build();
+
         Gson gson = new GsonBuilder()
                 .setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ")
                 .create();
@@ -46,6 +53,7 @@ public class TaskRepository {
                 //.baseUrl("http://172.17.9.33:8080")
                 .baseUrl("https://task-service.azurewebsites.net")
                 .addConverterFactory(GsonConverterFactory.create(gson))
+                .client(okHttpClient)
                 .build();
         taskServiceApi = retrofit.create(TaskServiceApi.class);
     }

@@ -138,7 +138,7 @@ public class AddEditTaskActivity extends AppCompatActivity implements
 
     private void sendSaveIntent() {
         Intent replyIntent = new Intent();
-        if (TextUtils.isEmpty(newName.getText())) {
+        if (newName == null || TextUtils.isEmpty(newName.getText())) {
             Toast.makeText(getApplicationContext(), "Please add task name", Toast.LENGTH_LONG).show();
             setResult(RESULT_CANCELED, replyIntent);
         } else {
@@ -152,6 +152,9 @@ public class AddEditTaskActivity extends AppCompatActivity implements
         String name = newName.getText().toString();
         replyIntent.putExtra(NAME, name);
         String description = newDescription.getText().toString();
+        if(description == null || description.isEmpty()) {
+            description = "Example task description here.";
+        }
         replyIntent.putExtra(DESCRIPTION, description);
         int priority = numberPickerPriority.getValue();
         replyIntent.putExtra(PRIORITY, priority);

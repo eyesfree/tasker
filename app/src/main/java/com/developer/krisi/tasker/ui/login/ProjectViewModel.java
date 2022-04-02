@@ -14,7 +14,6 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-import com.developer.krisi.tasker.data.ProjectRepository;
 import com.developer.krisi.tasker.data.model.TasksProject;
 import com.developer.krisi.tasker.R;
 import com.developer.krisi.tasker.web.service.ProjectServiceApi;
@@ -57,28 +56,30 @@ public class ProjectViewModel extends AndroidViewModel {
         new CreateProjectAsyncTask(project).execute();
     }
 
-    public void loginDataChanged(String projectId, String password) {
-        if (!isProjectIdValid(projectId)) {
+    public void loginDataChanged(String projectId, String newProjectName) {
+        if(isProjectIdValid(projectId) || isProjectNameValid(newProjectName)) {
+            //if one is correct set both statuses without setting errors
+            loginFormState.setValue(new LoginFormState(isProjectIdValid(projectId), isProjectNameValid(newProjectName)));
+            return;
+        } if (!isProjectIdValid(projectId)) {
             loginFormState.setValue(new LoginFormState(R.string.invalid_username, null));
-        } else if (!isPasswordValid(password)) {
+        } else if (!isProjectNameValid(newProjectName)) {
             loginFormState.setValue(new LoginFormState(null, R.string.invalid_password));
-        } else {
-            loginFormState.setValue(new LoginFormState(isProjectIdValid(projectId), isPasswordValid(password)));
         }
     }
 
     // A placeholder username validation check
-    private boolean isProjectIdValid(String username) {
-        if (username == null) {
+    private boolean isProjectIdValid(String projectId) {
+        if (projectId == null || (projectId!= null && projectId.length() != 24)) {
             return false;
         }
 
         return true;
     }
 
-    // A placeholder password validation check
-    private boolean isPasswordValid(String password) {
-        if (password == null) {
+    // Anything not empty is a valid name for now
+    private boolean isProjectNameValid(String newName) {
+        if (newName == null || newName.isEmpty() || newName.length() < 5) {
             return false;
         }
 
@@ -88,7 +89,6 @@ public class ProjectViewModel extends AndroidViewModel {
     private class CreateProjectAsyncTask extends AsyncTask<Context, Void, TasksProject> {
 
         private String TAG = ProjectViewModel.CreateProjectAsyncTask.class.getSimpleName();
-        private Context contx;
         private TasksProject newProject;
 
         public CreateProjectAsyncTask(TasksProject projectToCreate) {
@@ -109,9 +109,10 @@ public class ProjectViewModel extends AndroidViewModel {
                 Response<TasksProject> response = createdProject.execute();
                 return response.body();
             } catch (IOException e) {
-                Log.e(TAG, "error in getting response from service using retrofit");
+                Log.e(TAG, "error in getting response from service using retrofit. Returning sample empty project.");
+                //return an empty existing project
+                return new TasksProject("60d38c86013ccf492ad7de1b", "text");
             }
-            return null;
         }
 
         @Override
@@ -130,7 +131,6 @@ public class ProjectViewModel extends AndroidViewModel {
     private class FindProjectAsyncTask extends AsyncTask<Context, Void, TasksProject> {
 
         private String TAG = ProjectViewModel.CreateProjectAsyncTask.class.getSimpleName();
-        private Context contx;
         private String projectId;
 
         public FindProjectAsyncTask(String projectToFind) {

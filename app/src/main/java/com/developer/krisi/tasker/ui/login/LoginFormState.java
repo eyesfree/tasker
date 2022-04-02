@@ -7,41 +7,41 @@ import androidx.annotation.Nullable;
  */
 class LoginFormState {
     @Nullable
-    private Integer usernameError;
+    private Integer existingProjectError;
     @Nullable
-    private Integer passwordError;
-    private boolean isUsernameValid;
-    private boolean isPasswordValid;
+    private Integer newProjectNameError;
+    private boolean isProjectIdValid;
+    private boolean isNewProjectNameValid;
 
-    LoginFormState(@Nullable Integer usernameError, @Nullable Integer passwordError) {
-        this.usernameError = usernameError;
-        this.passwordError = passwordError;
-        this.isUsernameValid = false;
-        this.isPasswordValid = false;
+    LoginFormState(@Nullable Integer existingProjectError, @Nullable Integer newProjectNameError) {
+        this.existingProjectError = existingProjectError;
+        this.newProjectNameError = newProjectNameError;
+        this.isProjectIdValid = false;
+        this.isNewProjectNameValid = false;
     }
 
-    LoginFormState(boolean isUsernameValid, boolean isPasswordValid) {
-        this.usernameError = null;
-        this.passwordError = null;
-        this.isUsernameValid = isUsernameValid;
-        this.isPasswordValid = isPasswordValid;
-    }
-
-    @Nullable
-    Integer getUsernameError() {
-        return usernameError;
+    LoginFormState(boolean isProjectIdValid, boolean isNewProjectNameValid) {
+        this.existingProjectError = null;
+        this.newProjectNameError = null;
+        this.isProjectIdValid = isProjectIdValid;
+        this.isNewProjectNameValid = isNewProjectNameValid;
     }
 
     @Nullable
-    Integer getPasswordError() {
-        return passwordError;
+    Integer getExistingProjectError() {
+        return existingProjectError;
     }
 
-    public boolean isPasswordValid() {
-        return isPasswordValid;
+    @Nullable
+    Integer getNewProjectNameError() {
+        return newProjectNameError;
     }
 
-    public boolean isUsernameValid() {
-        return isUsernameValid;
+    public boolean isNewProjectNameValid() {
+        return isNewProjectNameValid;
+    }
+
+    public boolean isProjectIdValid() {
+        return isProjectIdValid;
     }
 }

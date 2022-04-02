@@ -58,13 +58,13 @@ public class SelectProjectActivity extends AppCompatActivity {
                     if (loginFormState == null) {
                         return;
                     }
-                    selectExistingProjectButton.setEnabled(loginFormState.isUsernameValid());
-                    createNewButton.setEnabled(loginFormState.isPasswordValid());
-                    if (loginFormState.getUsernameError() != null) {
-                        projectIdText.setError(getString(loginFormState.getUsernameError()));
+                    selectExistingProjectButton.setEnabled(loginFormState.isProjectIdValid());
+                    createNewButton.setEnabled(loginFormState.isNewProjectNameValid());
+                    if (loginFormState.getExistingProjectError() != null) {
+                        projectIdText.setError(getString(loginFormState.getExistingProjectError()));
                     }
-                    if (loginFormState.getPasswordError() != null) {
-                        newProjectNameText.setError(getString(loginFormState.getPasswordError()));
+                    if (loginFormState.getNewProjectNameError() != null) {
+                        newProjectNameText.setError(getString(loginFormState.getNewProjectNameError()));
                     }
                 }
             });

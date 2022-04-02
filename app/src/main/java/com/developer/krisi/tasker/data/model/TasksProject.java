@@ -20,8 +20,8 @@ public class TasksProject {
         this.name = displayName;
     }
 
-    public TasksProject(String userId, String displayName) {
-        this.id = userId;
+    public TasksProject(String projectId, String displayName) {
+        this.id = projectId;
         this.name = displayName;
     }
 

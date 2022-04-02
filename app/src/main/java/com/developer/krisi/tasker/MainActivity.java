@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = getIntent();
         String projectId = intent.getStringExtra(PROJECT_ID);
         String projectName = intent.getStringExtra(PROJECT_NAME);
-        this.setTitle(projectName);
+        setTitle(projectName);
         Log.i(TAG, "Creating view for MainActivity");
         setContentView(R.layout.activity_main);
         SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager(), projectId);

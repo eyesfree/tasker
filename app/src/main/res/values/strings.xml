@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Tasker</string>
+    <string name="app_name">Your Tasks!</string>
     <string name="tab_text_1">To Do</string>
     <string name="tab_text_2">Done</string>
 
@@ -19,14 +19,15 @@
     <string name="due_date_example">01/12/2020</string>
     <string name="UndoText">UNDO</string>
 
-    <string name="title_activity_select_project">Select Project</string>
-    <string name="prompt_email">Project Id</string>
+    <string name="title_activity_tasks">Just do it</string>
+    <string name="prompt_email">Type existing Project Id</string>
     <string name="prompt_password">New Project Name</string>
     <string name="action_sign_in">Select project </string>
     <string name="action_sign_in_short">Sign in</string>
     <string name="action_create_new">Create new project </string>
     <string name="welcome">"Welcome to "</string>
+    <string name="or">"OR"</string>
     <string name="invalid_username">Not a valid project id</string>
-    <string name="invalid_password">Password must be >5 characters</string>
-    <string name="login_failed">"Login failed"</string>
+    <string name="invalid_password">Not a valid project name</string>
+    <string name="login_failed">"Project selection failed"</string>
 </resources>
