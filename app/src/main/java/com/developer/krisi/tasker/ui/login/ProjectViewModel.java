@@ -33,7 +33,7 @@ public class ProjectViewModel extends AndroidViewModel {
 
 
         retrofit = new Retrofit.Builder()
-                //.baseUrl("http://172.17.9.33:8080")
+                //.baseUrl("http://172.28.192.1:8080")
                 .baseUrl("https://task-service.azurewebsites.net")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
@@ -47,13 +47,13 @@ public class ProjectViewModel extends AndroidViewModel {
     LiveData<LoginResult> getLoginResult() {
         return loginResult;
     }
-
+/**
     public void selectProject(String projectId) {
         new FindProjectAsyncTask(projectId).execute();
-    }
+    } */
 
     public void createAndSelectProject(TasksProject project) {
-        new CreateProjectAsyncTask(project).execute();
+        new FindOrCreate(project).execute();
     }
 
     public void loginDataChanged(String projectId, String newProjectName) {
@@ -63,6 +63,16 @@ public class ProjectViewModel extends AndroidViewModel {
             return;
         } if (!isProjectIdValid(projectId)) {
             loginFormState.setValue(new LoginFormState(R.string.invalid_username, null));
+        } else if (!isProjectNameValid(newProjectName)) {
+            loginFormState.setValue(new LoginFormState(null, R.string.invalid_password));
+        }
+    }
+
+    public void loginDataChanged(String newProjectName) {
+        if(isProjectNameValid(newProjectName)) {
+            //if one is correct set both statuses without setting errors
+            loginFormState.setValue(new LoginFormState(true, isProjectNameValid(newProjectName)));
+            return;
         } else if (!isProjectNameValid(newProjectName)) {
             loginFormState.setValue(new LoginFormState(null, R.string.invalid_password));
         }
@@ -79,19 +89,19 @@ public class ProjectViewModel extends AndroidViewModel {
 
     // Anything not empty is a valid name for now
     private boolean isProjectNameValid(String newName) {
-        if (newName == null || newName.isEmpty() || newName.length() < 5) {
+        if (newName == null || newName.isEmpty()) {
             return false;
         }
 
         return true;
     }
 
-    private class CreateProjectAsyncTask extends AsyncTask<Context, Void, TasksProject> {
+    private class FindOrCreate extends AsyncTask<Context, Void, TasksProject> {
 
-        private String TAG = ProjectViewModel.CreateProjectAsyncTask.class.getSimpleName();
+        private String TAG = ProjectViewModel.FindOrCreate.class.getSimpleName();
         private TasksProject newProject;
 
-        public CreateProjectAsyncTask(TasksProject projectToCreate) {
+        public FindOrCreate(TasksProject projectToCreate) {
             this.newProject = projectToCreate;
         }
 
@@ -104,15 +114,25 @@ public class ProjectViewModel extends AndroidViewModel {
         protected TasksProject doInBackground(Context... params) {
             Log.e(TAG, "processing http request in async task using retrofit");
 
+            //Step one - find if project already exists
+            Call<TasksProject> existingProject = projectServiceApi.findByName(newProject.getName());
+            try {
+                Response<TasksProject> response = existingProject.execute();
+                return response.body();
+            } catch (IOException e) {
+                Log.e(TAG, "error in getting response from service using retrofit.");
+            }
+
+            //Step two - create if not found
             Call<TasksProject> createdProject = projectServiceApi.create(newProject);
             try {
                 Response<TasksProject> response = createdProject.execute();
                 return response.body();
             } catch (IOException e) {
                 Log.e(TAG, "error in getting response from service using retrofit. Returning sample empty project.");
-                //return an empty existing project
-                return new TasksProject("60d38c86013ccf492ad7de1b", "text");
             }
+
+            return null;
         }
 
         @Override
@@ -127,10 +147,10 @@ public class ProjectViewModel extends AndroidViewModel {
             }
         }
     }
-
+/**
     private class FindProjectAsyncTask extends AsyncTask<Context, Void, TasksProject> {
 
-        private String TAG = ProjectViewModel.CreateProjectAsyncTask.class.getSimpleName();
+        private String TAG = ProjectViewModel.FindOrCreate.class.getSimpleName();
         private String projectId;
 
         public FindProjectAsyncTask(String projectToFind) {
@@ -148,9 +168,9 @@ public class ProjectViewModel extends AndroidViewModel {
             if(projectId == null) {
                 return null;
             }
-            Call<TasksProject> createdProject = projectServiceApi.findById(projectId);
+            Call<TasksProject> foundProject = projectServiceApi.findById(projectId);
             try {
-                Response<TasksProject> response = createdProject.execute();
+                Response<TasksProject> response = foundProject.execute();
                 return response.body();
             } catch (IOException e) {
                 Log.e(TAG, "error in getting response from service using retrofit");
@@ -170,4 +190,5 @@ public class ProjectViewModel extends AndroidViewModel {
             }
         }
     }
+        **/
 }

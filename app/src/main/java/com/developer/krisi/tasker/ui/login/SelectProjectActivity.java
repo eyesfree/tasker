@@ -46,9 +46,9 @@ public class SelectProjectActivity extends AppCompatActivity {
             setContentView(R.layout.activity_select_project);
             projectViewModel = ViewModelProviders.of(this).get(ProjectViewModel.class);
 
-            final EditText projectIdText = findViewById(R.id.projectId);
+            //final EditText projectIdText = findViewById(R.id.projectId);
             final EditText newProjectNameText = findViewById(R.id.newProjectName);
-            final Button selectExistingProjectButton = findViewById(R.id.login);
+            //final Button selectExistingProjectButton = findViewById(R.id.login);
             final Button createNewButton = findViewById(R.id.create_new_project);
             final ProgressBar loadingProgressBar = findViewById(R.id.loading);
 
@@ -58,11 +58,11 @@ public class SelectProjectActivity extends AppCompatActivity {
                     if (loginFormState == null) {
                         return;
                     }
-                    selectExistingProjectButton.setEnabled(loginFormState.isProjectIdValid());
+                    //selectExistingProjectButton.setEnabled(loginFormState.isProjectIdValid());
                     createNewButton.setEnabled(loginFormState.isNewProjectNameValid());
-                    if (loginFormState.getExistingProjectError() != null) {
-                        projectIdText.setError(getString(loginFormState.getExistingProjectError()));
-                    }
+                    //if (loginFormState.getExistingProjectError() != null) {
+                     //   projectIdText.setError(getString(loginFormState.getExistingProjectError()));
+                    //}
                     if (loginFormState.getNewProjectNameError() != null) {
                         newProjectNameText.setError(getString(loginFormState.getNewProjectNameError()));
                     }
@@ -102,30 +102,29 @@ public class SelectProjectActivity extends AppCompatActivity {
 
                 @Override
                 public void afterTextChanged(Editable s) {
-                    projectViewModel.loginDataChanged(projectIdText.getText().toString(),
-                            newProjectNameText.getText().toString());
+                    projectViewModel.loginDataChanged(newProjectNameText.getText().toString());
                 }
             };
-            projectIdText.addTextChangedListener(afterTextChangedListener);
+            //projectIdText.addTextChangedListener(afterTextChangedListener);
             newProjectNameText.addTextChangedListener(afterTextChangedListener);
             newProjectNameText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
 
                 @Override
                 public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                     if (actionId == EditorInfo.IME_ACTION_DONE) {
-                        projectViewModel.selectProject(projectIdText.getText().toString());
+                        projectViewModel.createAndSelectProject(new TasksProject(newProjectNameText.getText().toString()));
                     }
                     return false;
                 }
             });
-
+/**
             selectExistingProjectButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     loadingProgressBar.setVisibility(View.VISIBLE);
                     projectViewModel.selectProject(projectIdText.getText().toString());
                 }
-            });
+            });**/
 
             createNewButton.setOnClickListener(new View.OnClickListener() {
                 @Override

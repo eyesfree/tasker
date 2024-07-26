@@ -21,7 +21,7 @@
 
     <string name="title_activity_tasks">Just do it</string>
     <string name="prompt_email">Type existing Project Id</string>
-    <string name="prompt_password">New Project Name</string>
+    <string name="prompt_password">Your Project Name</string>
     <string name="action_sign_in">Select project </string>
     <string name="action_sign_in_short">Sign in</string>
     <string name="action_create_new">Create new project </string>
